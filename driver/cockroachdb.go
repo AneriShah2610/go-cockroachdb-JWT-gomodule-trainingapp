@@ -13,7 +13,7 @@ type DB struct {
 
 var dbConn = &DB{}
 
-func connectDb() (*DB, error) {
+func ConnectDb() (*DB, error) {
 	connectionString := "postgresql://root@localhost:26257/traning?sslmode=disable"
 	dbConnection, err := sql.Open("postgres", connectionString)
 	if err != nil {
