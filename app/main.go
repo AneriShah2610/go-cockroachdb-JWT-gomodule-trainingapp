@@ -19,10 +19,10 @@ func main() {
 
 	router.Use(handler.MiddleWareHandler)
 	// Functions for user
-	router.HandleFunc("/user/new", handler.RegisterUser).Methods("POST")
+	router.HandleFunc("/user/register", handler.RegisterUser).Methods("POST")
 	router.HandleFunc("/user/fetch", handler.FetchUser).Methods("GET")
-	router.HandleFunc("/user/block/{id}", handler.BlockUser).Methods("PUT")
-	//router.HandleFunc("/user/login/{username}/{password}", handler.LogIn).Methods("GET")
+	router.HandleFunc("/user/delete/{userid}", handler.DeleteUser).Methods("DELETE")
+	router.HandleFunc("/user/login/{username}/{password}", handler.LogIn).Methods("GET")
 
 	// Functions for course
 	router.HandleFunc("/course/new", handler.CreateCourse).Methods("POST")
