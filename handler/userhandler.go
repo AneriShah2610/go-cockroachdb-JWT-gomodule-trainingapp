@@ -13,11 +13,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// SessionTokenResponse token
 type SessionTokenResponse struct {
 	Token string `json:"sessionToken"`
 }
 
 var ctxt context.Context
+
 
 // MiddleWareHandler  middleware
 func MiddleWareHandler(next http.Handler) http.Handler {
@@ -27,7 +29,6 @@ func MiddleWareHandler(next http.Handler) http.Handler {
 			log.Fatal(err)
 		}
 		ctxt = context.WithValue(request.Context(), "crConn", crConn)
-		fmt.Println(ctxt)
 		next.ServeHTTP(writer, request.WithContext(ctxt))
 	})
 }
@@ -50,7 +51,7 @@ func FetchUser(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-/* ----- Code for registration ----- */
+/* ----- registration ----- */
 
 // RegisterUser for user registration
 func RegisterUser(writer http.ResponseWriter, request *http.Request) {
@@ -79,11 +80,11 @@ func InsertData(writer http.ResponseWriter, request *http.Request, response inte
 	fmt.Fprintf(writer, `user created successfully`)
 }
 
-/* ----- Complete code for registration -----*/
+/* ----- Complete registration -----*/
 
-/* ----- Code for Login ----- */
+/* ----- Login ----- */
 
-// LogIn login function
+// LogIn function
 func LogIn(writer http.ResponseWriter, request *http.Request) {
 	u, err := readUser(request)
 	if err != nil {
@@ -105,9 +106,11 @@ func writeLogIn(writer http.ResponseWriter, request *http.Request, response inte
 	fmt.Fprintf(writer, `Login successfull`)
 }
 
-/* ----- Complete Code for Login ----- */
+/* ----- Complete Login ----- */
 
-// DeleteUser to block particular student
+/* ----- Delete user ----- */
+
+// DeleteUser to delete particular student
 func DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	crConn := ctxt.Value("crConn").(*driver.DB)
 	params := mux.Vars(request)
@@ -118,7 +121,7 @@ func DeleteUser(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-// RegisterUser to create new user
+/* ----- Complete Delete user ----- */
 
 // Read data for match
 func readUser(request *http.Request) (model.User, error) {

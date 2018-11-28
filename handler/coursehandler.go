@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// CreateCourse to create new course by trainer
 func CreateCourse(writer http.ResponseWriter, request *http.Request) {
 	course := model.Course{}
 	_ = json.NewDecoder(request.Body).Decode(&course)
@@ -20,6 +21,8 @@ func CreateCourse(writer http.ResponseWriter, request *http.Request) {
 	}
 	fmt.Fprintf(writer, `course created successfully`)
 }
+
+// FetchCourse retrieve all course details by trainer
 func FetchCourse(writer http.ResponseWriter, request *http.Request) {
 	course := model.Course{}
 	crConn := ctxt.Value("crConn").(*driver.DB)
@@ -36,6 +39,8 @@ func FetchCourse(writer http.ResponseWriter, request *http.Request) {
 		json.NewEncoder(writer).Encode(course)
 	}
 }
+
+// DeleteCourse by trainer
 func DeleteCourse(writer http.ResponseWriter, request *http.Request) {
 
 	crConn := ctxt.Value("crConn").(*driver.DB)
@@ -46,16 +51,22 @@ func DeleteCourse(writer http.ResponseWriter, request *http.Request) {
 		fmt.Fprintf(writer, `course deleted successfully`)
 	}
 }
+
+// UpdateCourse update course only by trainer
 func UpdateCourse(writer http.ResponseWriter, request *http.Request) {
 	course := model.Course{}
+	_ = json.NewDecoder(request.Body).Decode(&course)
 	crConn := ctxt.Value("crConn").(*driver.DB)
 	params := mux.Vars(request)
-	if _, err := crConn.DatabaseConn.Exec("UPDATE training.course_mst SET (courseid=$1,description=$2,videourl=$3) WHERE courseid = $4", course.CourseName, course.Description, course.VideoURL, params["courseid"]); err != nil {
+	sqlStmt := `UPDATE training.course_mst SET coursename = $2, description = $3, videourl = $4 WHERE courseid=$1`
+	if _, err := crConn.DatabaseConn.Exec(sqlStmt, params["courseid"], course.CourseName, course.Description, course.VideoURL); err != nil {
 		log.Fatal("Error while deleting course", err)
 	} else {
 		fmt.Fprintf(writer, `course updated  successfully`)
 	}
 }
+
+// FetchParticularCourse retrievr particular course
 func FetchParticularCourse(writer http.ResponseWriter, request *http.Request) {
 	course := model.Course{}
 	crConn := ctxt.Value("crConn").(*driver.DB)

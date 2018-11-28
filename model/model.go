@@ -21,7 +21,8 @@ type Course struct {
 
 // CourseStudent model
 type CourseStudent struct {
-	CourseStudentID int `json:"csid"`
-	StudentID       int `json:"studentid"`
-	CourseDetail    *Course
+	CourseStudentID int    `json:"csid"`
+	CourseID        int    `json:"courseid"`
+	StudentID       int    `json:"studentid"`
+	CsFlag          string `json:"csflag"`
 }
