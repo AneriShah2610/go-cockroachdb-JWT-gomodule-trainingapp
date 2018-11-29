@@ -2,9 +2,9 @@
  A simple training app using golang with help of JWT , cockroach db and go module
 
 ## Prerequisite
-1. [Install golang] (https://golang.org/dl/)
-2. Setup GOPATH [Link1]:(https://github.com/golang/go/wiki/SettingGOPATH), [Link2]:(https://golang.org/doc/code.html#GOPATH)
-3. [Install cockroachdb] (https://www.cockroachlabs.com/docs/stable/install-cockroachdb-windows.html)
+1. [Install golang](https://golang.org/dl/)
+2. Setup GOPATH [Link1](https://golang.org/doc/code.html#GOPATH) and [Link2](https://github.com/golang/go/wiki/GOPATH)
+3. [Install cockroachdb](https://www.cockroachlabs.com/docs/stable/install-cockroachdb-windows.html)
 4. Check Binary file of cockroachdb : `.\cockroach.exe` run in cmd
 5. Start node in cockroachdb : `cockroach start --insecure` run in cmd where cockroachdb is intalled
 6. Test cluster : `cockroach sql --insecure` run in cmd where cockroachdb is intalled
@@ -34,4 +34,4 @@
 
 1. Clone repo
 2. Run `go run main.go`
-3. Run `http://localhost:8000/` on postman or ant other client tool
+3. Run 'http://localhost:8000/' on postman or ant other client tool
