@@ -20,7 +20,7 @@ type SessionTokenResponse struct {
 
 var ctxt context.Context
 
-// MiddleWareHandler  middleware
+// MiddleWareHandler  for database connection
 func MiddleWareHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
 		crConn, err := driver.ConnectDb()
@@ -96,7 +96,8 @@ func ReadData(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 		if users.UserName != params["username"] || users.Password != params["password"] {
-			fmt.Fprintf(writer, `Invalid user or pasword`)
+			fmt.Fprintf(writer, `Invalid password or user`)
+			http.Redirect(writer, request, "/user/login/{username}/{password}", 302)
 			return
 		}
 		next(writer, request)

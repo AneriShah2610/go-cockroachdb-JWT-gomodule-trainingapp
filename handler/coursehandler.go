@@ -81,7 +81,7 @@ func UpdateCourse(writer http.ResponseWriter, request *http.Request) {
 	}
 }
 
-// FetchParticularCourse retrievr particular course
+// FetchParticularCourse retrieve particular course
 func FetchParticularCourse(writer http.ResponseWriter, request *http.Request) {
 	course := model.Course{}
 	crConn := ctxt.Value("crConn").(*driver.DB)

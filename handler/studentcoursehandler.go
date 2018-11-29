@@ -30,6 +30,7 @@ func EnrollInCourse(writer http.ResponseWriter, request *http.Request) {
 
 // FetchEnrolledCourse for student can fetch own enrolled student
 func FetchEnrolledCourse(writer http.ResponseWriter, request *http.Request) {
+	// To do: check Loeedin or not
 	params := mux.Vars(request)
 	crConn := ctxt.Value("crConn").(*driver.DB)
 	result := crConn.DatabaseConn.QueryRow("select user_mst.username,studentcourse.studentid from training.user_mst,training.course_mst,training.studentcourse where user_mst.username=$1 and studentcourse.courseid=course_mst.courseid and studentcourse.studentid=user_mst.userid", params["studentname"])
