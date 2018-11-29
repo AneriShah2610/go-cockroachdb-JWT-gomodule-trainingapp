@@ -34,4 +34,4 @@
 
 1. Clone repo
 2. Run `go run main.go`
-3. Run 'http://localhost:8000/' on postman or ant other client tool
+3. Run 'http://localhost:8000/' on postman or any other client tool
