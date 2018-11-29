@@ -50,7 +50,7 @@ func FetchEnrolledCourse(writer http.ResponseWriter, request *http.Request) {
 			if err := rows.Scan(&course.CourseName, &course.Description, &course.VideoURL); err != nil {
 				log.Fatal("Error while scanning data", err)
 			}
-			fmt.Fprintf(writer, "\n", course.CourseName, course.Description, course.VideoURL)
+			fmt.Fprintf(writer, course.CourseName, course.Description, course.VideoURL, "\n")
 		}
 	} else {
 		rows, err := crConn.DatabaseConn.Query("select course_mst.coursename,course_mst.description from training.course_mst,training.studentcourse where (course_mst.courseid = studentcourse.courseid) and (studentcourse.studentid=$1) and studentcourse.csflag='0' ", studentid)
@@ -63,7 +63,7 @@ func FetchEnrolledCourse(writer http.ResponseWriter, request *http.Request) {
 			if err := rows.Scan(&course.CourseName, &course.Description); err != nil {
 				log.Fatal("Error while scanning data", err)
 			}
-			fmt.Fprintf(writer, "\n", course.CourseName, course.Description)
+			fmt.Fprintf(writer, course.CourseName, course.Description, "\n")
 		}
 	}
 }

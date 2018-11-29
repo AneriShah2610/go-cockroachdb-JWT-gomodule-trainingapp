@@ -42,13 +42,13 @@ func FetchCourse(writer http.ResponseWriter, request *http.Request) {
 
 // DeleteCourse by trainer
 func DeleteCourse(writer http.ResponseWriter, request *http.Request) {
-	usre_type, err := checkUser(request)
+	usretype, err := checkUser(request)
 	if err != nil {
 		log.Fatal("Error at checking user type", err)
 	}
 	crConn := ctxt.Value("crConn").(*driver.DB)
 	params := mux.Vars(request)
-	if usre_type == "T" {
+	if usretype == "T" {
 		if _, err := crConn.DatabaseConn.Exec("DELETE FROM training.course_mst WHERE courseid=$1", params["courseid"]); err != nil {
 			log.Fatal("Error while deleting course", err)
 		} else {

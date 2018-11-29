@@ -21,7 +21,7 @@ func main() {
 	// Functions for user
 	router.HandleFunc("/user/fetch", handler.FetchUser).Methods("GET")
 	router.HandleFunc("/user/register", handler.RegisterUser).Methods("POST")
-	router.HandleFunc("/user/login/{username}/{password}", handler.LogIn).Methods("GET")
+	router.HandleFunc("/user/login/{username}/{password}", handler.ReadData(handler.LogIn)).Methods("GET")
 	router.HandleFunc("/user/delete/{userid}", handler.DeleteUser).Methods("DELETE")
 
 	// Functions on course by trainer

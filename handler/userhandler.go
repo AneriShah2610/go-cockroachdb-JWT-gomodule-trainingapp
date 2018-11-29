@@ -20,7 +20,6 @@ type SessionTokenResponse struct {
 
 var ctxt context.Context
 
-
 // MiddleWareHandler  middleware
 func MiddleWareHandler(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
@@ -83,28 +82,34 @@ func InsertData(writer http.ResponseWriter, request *http.Request, response inte
 
 /* ----- Login ----- */
 
+// ReadData middleware
+func ReadData(next http.HandlerFunc) http.HandlerFunc {
+	return func(writer http.ResponseWriter, request *http.Request) {
+		users := model.User{}
+		_ = json.NewDecoder(request.Body).Decode(&users)
+		params := mux.Vars(request)
+		crConn := ctxt.Value("crConn").(*driver.DB)
+		result := crConn.DatabaseConn.QueryRow("SELECT username,user_password,email FROM training.user_mst WHERE username=$1", params["username"])
+		err := result.Scan(&users.UserName, &users.Password, &user.Email)
+		if err != nil {
+			log.Fatal("Error while scanning password", err)
+			return
+		}
+		if users.UserName != params["username"] || users.Password != params["password"] {
+			fmt.Fprintf(writer, `Invalid user or pasword`)
+			return
+		}
+		next(writer, request)
+	}
+}
+
 // LogIn function
 func LogIn(writer http.ResponseWriter, request *http.Request) {
-	users := model.User{}
-	_ = json.NewDecoder(request.Body).Decode(&users)
-	params := mux.Vars(request)
-	crConn := ctxt.Value("crConn").(*driver.DB)
-	result := crConn.DatabaseConn.QueryRow("SELECT username,user_password FROM training.user_mst WHERE username=$1", params["username"])
-	err := result.Scan(&users.UserName,&users.Password)
+	tokenString, err := authentication.GenerateToken() // Generate token
 	if err != nil {
-		log.Fatal("Error while scanning password", err)
-		return
+		log.Fatal("Error at generating token : ", err)
 	}
-	if users.UserName != params["username"] || users.Password != params["password"] {
-		fmt.Fprintf(writer, `Username or password invalid`)
-		return
-	} else {
-		tokenString, err := authentication.GenerateToken() // Generate token
-		if err != nil {
-			log.Fatal("Error at generating token : ", err)
-		}
-		writeLogIn(writer, request, SessionTokenResponse{Token: tokenString})
-	}
+	writeLogIn(writer, request, SessionTokenResponse{Token: tokenString})
 }
 func writeLogIn(writer http.ResponseWriter, request *http.Request, response interface{}) {
 	fmt.Fprintf(writer, `Login successfull`)
@@ -126,20 +131,3 @@ func DeleteUser(writer http.ResponseWriter, request *http.Request) {
 }
 
 /* ----- Complete Delete user ----- */
-
-// Read data for match
-func readUser(request *http.Request) (model.User, error) {
-	user := model.User{}
-	crConn := ctxt.Value("crConn").(*driver.DB)
-	rows, err := crConn.DatabaseConn.Query("SELECT * FROM training.user_mst")
-	if err != nil {
-		log.Fatal("Error while retrieving data : ", err)
-	}
-	for rows.Next() {
-		if err := rows.Scan(&user.UserID, &user.UserName, &user.Email, &user.Contactno, &user.Password, &user.UserFlag); err != nil {
-			log.Fatal("Error while scanning data", err)
-		}
-	}
-	_ = json.NewDecoder(request.Body).Decode(&user)
-	return user, err
-}
