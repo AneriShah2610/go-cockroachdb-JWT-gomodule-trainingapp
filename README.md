@@ -16,19 +16,19 @@
 
 #### APIs (Operations for APIs)
 
-- `GET` : [/user/fetch] - Retrieve all users data
-- `POST` : [/user/register] - Registeration (Two types of users : Student & Trainer)
-- `GET` : [/user/login/{username}/{password}] - Login
-- `DELETE` : [/user/delete/{userid}] - Delete user
-- `POST` : [/course/new] - Create new course only by trainer
-- `GET` : [/course/fetch] - Fetch all courses only by trainer
-- `DELETE` : [/course/delete/{courseid}] - Delete course by trainer
-- `PUT` : [/course/update/{courseid}] - Update course by trainer
-- `GET` : [/course/fetch/{courseid}] - Fetch particular course by courseid
-- `POST` : [/course/student/new] - Student enroll in course
-- `GET` : [/course/student/fetch/{studentname}] - Student fetch all course details if he/she is enrolled in that course otherwise fetch few details
-- `DELETE` : [/course/student/unenroll/{studentid}/{courseid}] - Student Unenroll from particular course
-- `PUT` : [/course/student/block/{studentid}/{courseid}] - Trainer can block particular student for particular course 
+- `GET` : (/user/fetch) - Retrieve all users data
+- `POST` : (/user/register) - Registration (Two types of users : Student & Trainer)
+- `GET` : (/user/login/{username}/{password}) - Login
+- `DELETE` : (/user/delete/{userid}) - Delete user
+- `POST` : (/course/new) - Create new course only by trainer
+- `GET` : (/course/fetch) - Fetch all courses only by trainer
+- `DELETE` : (/course/delete/{courseid}) - Delete course by trainer
+- `PUT` : (/course/update/{courseid}) - Update course by trainer
+- `GET` : (/course/fetch/{courseid}) - Fetch particular course by courseid
+- `POST` : (/course/student/new) - Student enroll in course
+- `GET` : (/course/student/fetch/{studentname}) - Student fetch all course details if he/she is enrolled in that course otherwise fetch few details
+- `DELETE` : (/course/student/unenroll/{studentid}/{courseid}) - Student Unenroll from particular course
+- `PUT` : (/course/student/block/{studentid}/{courseid}) - Trainer can block particular student for particular course 
 
 ##### Getting started
 
