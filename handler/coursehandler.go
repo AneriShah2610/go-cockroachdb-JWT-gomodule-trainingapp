@@ -42,27 +42,42 @@ func FetchCourse(writer http.ResponseWriter, request *http.Request) {
 
 // DeleteCourse by trainer
 func DeleteCourse(writer http.ResponseWriter, request *http.Request) {
-
+	usre_type, err := checkUser(request)
+	if err != nil {
+		log.Fatal("Error at checking user type", err)
+	}
 	crConn := ctxt.Value("crConn").(*driver.DB)
 	params := mux.Vars(request)
-	if _, err := crConn.DatabaseConn.Exec("DELETE FROM training.course_mst WHERE courseid=$1", params["courseid"]); err != nil {
-		log.Fatal("Error while deleting course", err)
+	if usre_type == "T" {
+		if _, err := crConn.DatabaseConn.Exec("DELETE FROM training.course_mst WHERE courseid=$1", params["courseid"]); err != nil {
+			log.Fatal("Error while deleting course", err)
+		} else {
+			fmt.Fprintf(writer, `course deleted successfully`)
+		}
 	} else {
-		fmt.Fprintf(writer, `course deleted successfully`)
+		log.Fatal(writer, `U are not authorized person delete course`)
 	}
 }
 
 // UpdateCourse update course only by trainer
 func UpdateCourse(writer http.ResponseWriter, request *http.Request) {
+	typeUser, err := checkUser(request)
+	if err != nil {
+		log.Fatal("Error at checking user type", err)
+	}
 	course := model.Course{}
 	_ = json.NewDecoder(request.Body).Decode(&course)
 	crConn := ctxt.Value("crConn").(*driver.DB)
 	params := mux.Vars(request)
-	sqlStmt := `UPDATE training.course_mst SET coursename = $2, description = $3, videourl = $4 WHERE courseid=$1`
-	if _, err := crConn.DatabaseConn.Exec(sqlStmt, params["courseid"], course.CourseName, course.Description, course.VideoURL); err != nil {
-		log.Fatal("Error while deleting course", err)
+	if typeUser == "T" {
+		sqlStmt := `UPDATE training.course_mst SET coursename = $2, description = $3, videourl = $4 WHERE courseid=$1`
+		if _, err := crConn.DatabaseConn.Exec(sqlStmt, params["courseid"], course.CourseName, course.Description, course.VideoURL); err != nil {
+			log.Fatal("Error while deleting course", err)
+		} else {
+			fmt.Fprintf(writer, `course updated  successfully`)
+		}
 	} else {
-		fmt.Fprintf(writer, `course updated  successfully`)
+		fmt.Fprintf(writer, `you are not authorized person to update course`)
 	}
 }
 

@@ -61,12 +61,11 @@ func RegisterUser(writer http.ResponseWriter, request *http.Request) {
 		log.Fatal("Error while calling readUser function", err)
 	}
 	fmt.Println(user)*/
-	tokenString, err := authentication.GenerateToekn() // Generate token
+	tokenString, err := authentication.GenerateToken() // Generate token
 	if err != nil {
 		log.Fatal("Error at generating token : ", err)
 	}
 	InsertData(writer, request, SessionTokenResponse{Token: tokenString})
-
 }
 
 // InsertData function to insert data into user table
@@ -86,16 +85,21 @@ func InsertData(writer http.ResponseWriter, request *http.Request, response inte
 
 // LogIn function
 func LogIn(writer http.ResponseWriter, request *http.Request) {
-	u, err := readUser(request)
-	if err != nil {
-		log.Fatal(err)
-	}
+	users := model.User{}
+	_ = json.NewDecoder(request.Body).Decode(&users)
 	params := mux.Vars(request)
-	if u.UserName != params["username"] || u.Password != params["password"] {
+	crConn := ctxt.Value("crConn").(*driver.DB)
+	result := crConn.DatabaseConn.QueryRow("SELECT username,user_password FROM training.user_mst WHERE username=$1", params["username"])
+	err := result.Scan(&users.UserName,&users.Password)
+	if err != nil {
+		log.Fatal("Error while scanning password", err)
+		return
+	}
+	if users.UserName != params["username"] || users.Password != params["password"] {
 		fmt.Fprintf(writer, `Username or password invalid`)
 		return
 	} else {
-		tokenString, err := authentication.GenerateToekn() // Generate token
+		tokenString, err := authentication.GenerateToken() // Generate token
 		if err != nil {
 			log.Fatal("Error at generating token : ", err)
 		}

@@ -33,8 +33,7 @@ func main() {
 
 	// Functions for studentcourse
 	router.HandleFunc("/course/student/new", handler.EnrollInCourse).Methods("POST")
-	router.HandleFunc("/course/student/fetch", handler.FetchCourseByStudent).Methods("GET")
-	router.HandleFunc("/course/student/fetch/{studentid}", handler.FetchEnrolledCourse).Methods("GET")
+	router.HandleFunc("/course/student/fetch/{studentname}", handler.FetchEnrolledCourse).Methods("GET")
 	router.HandleFunc("/course/student/unenroll/{studentid}/{courseid}", handler.UnEnroll).Methods("DELETE")
 	router.HandleFunc("/course/student/block/{studentid}/{courseid}", handler.BlockUser).Methods("PUT")
 

@@ -11,8 +11,8 @@ import (
 var secretkey = []byte("secret_key")
 var user model.User
 
-// GenerateToekn generate token
-func GenerateToekn() (string, error) {
+// GenerateToken generate token
+func GenerateToken() (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	token.Claims = jwt.MapClaims{
 		"userid":   user.UserID,
