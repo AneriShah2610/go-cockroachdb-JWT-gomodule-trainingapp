@@ -33,38 +33,36 @@ func FetchEnrolledCourse(writer http.ResponseWriter, request *http.Request) {
 	// To do: check Loeedin or not
 	params := mux.Vars(request)
 	crConn := ctxt.Value("crConn").(*driver.DB)
-	result := crConn.DatabaseConn.QueryRow("select user_mst.username,studentcourse.studentid from training.user_mst,training.course_mst,training.studentcourse where user_mst.username=$1 and studentcourse.courseid=course_mst.courseid and studentcourse.studentid=user_mst.userid", params["studentname"])
-	err := result.Scan(&user.UserName, &studentcourse.StudentID)
+	result := crConn.DatabaseConn.QueryRow("SELECT studentcourse.studentid,studentcourse.csflag FROM training.studentcourse WHERE studentid=$1", params["userid"])
+	err := result.Scan(&studentcourse.StudentID, &studentcourse.CsFlag)
 	if err != nil {
-		log.Fatal("Error while scannig that student enrolled or not", err)
+		log.Fatal("Error while fetching student id and csflag", err)
 	}
-	studentid := studentcourse.StudentID
-	// if username is exist in course enrollment than they can get all the course details
-	if user.UserName != " " {
-		rows, err := crConn.DatabaseConn.Query("select course_mst.coursename,course_mst.description,course_mst.videourl from training.course_mst,training.studentcourse where (course_mst.courseid = studentcourse.courseid) and (studentcourse.studentid=$1) and studentcourse.csflag='0' ", studentid)
-		if err != nil {
-			log.Fatal("Error while retrieving data", err)
-		}
-		fmt.Fprintf(writer, `My Enrolled courses`)
-		fmt.Fprintf(writer, "\n")
-		for rows.Next() {
-			if err := rows.Scan(&course.CourseName, &course.Description, &course.VideoURL); err != nil {
-				log.Fatal("Error while scanning data", err)
-			}
-			fmt.Fprintf(writer, course.CourseName, course.Description, course.VideoURL, "\n")
-		}
+	if studentcourse.StudentID == 0 {
+		fmt.Fprintf(writer, `You have no enrolled courses`)
 	} else {
-		rows, err := crConn.DatabaseConn.Query("select course_mst.coursename,course_mst.description from training.course_mst,training.studentcourse where (course_mst.courseid = studentcourse.courseid) and (studentcourse.studentid=$1) and studentcourse.csflag='0' ", studentid)
-		if err != nil {
-			log.Fatal("Error while retrieving data", err)
-		}
-		fmt.Fprintf(writer, `Course details`)
-		fmt.Fprintf(writer, "\n")
-		for rows.Next() {
-			if err := rows.Scan(&course.CourseName, &course.Description); err != nil {
-				log.Fatal("Error while scanning data", err)
+		if studentcourse.CsFlag == "0" {
+			row, err := crConn.DatabaseConn.Query("SELECT course_mst.coursename,course_mst.description,course_mst.videourl,course_mst.trainerid FROM training.course_mst,training.studentcourse,training.user_mst WHERE (studentcourse.courseid=course_mst.courseid) and (studentcourse.studentid=user_mst.userid) and studentid=$1", params["userid"])
+			if err != nil {
+				log.Fatal("Error while fetching course details", err)
 			}
-			fmt.Fprintf(writer, course.CourseName, course.Description, "\n")
+			for row.Next() {
+				if err := row.Scan(&course.CourseName, &course.Description, &course.VideoURL, &course.TrainerID); err != nil {
+					log.Fatal("Scannin data", err)
+				}
+				fmt.Fprintf(writer, course.CourseName, course.Description, course.VideoURL, course.TrainerID)
+			}
+		} else {
+			row, err := crConn.DatabaseConn.Query("SELECT course_mst.coursename,course_mst.description FROM training.course_mst,training.user_mst,training.studentcourse WHERE (studentcourse.courseid=course_mst.courseid) and (studentcourse.studentid=user_mst.userid) and studentid=$1", params["userid"])
+			if err != nil {
+				log.Fatal("Error while fetching course details", err)
+			}
+			for row.Next() {
+				if err := row.Scan(&course.CourseName, &course.Description); err != nil {
+					log.Fatal("Scannin data", err)
+				}
+				fmt.Fprintf(writer, course.CourseName, course.Description)
+			}
 		}
 	}
 }
@@ -85,28 +83,9 @@ func BlockUser(writer http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
 	crConn := ctxt.Value("crConn").(*driver.DB)
 	_ = json.NewDecoder(request.Body).Decode(&studentcourse)
-	checkuser, err := checkUser(request)
-	if err != nil {
-		log.Fatal("cana not find u as a trainer", err)
-	}
-	if checkuser == "T" {
-		if _, err := crConn.DatabaseConn.Exec("UPDATE training.studentcourse SET csflag = '1' WHERE studentid = $1 and courseid = $2", params["studentid"], params["courseid"]); err != nil {
-			log.Fatal("Error while deleting course", err)
-		} else {
-			fmt.Fprintf(writer, `block student successfully`)
-		}
+	if _, err := crConn.DatabaseConn.Exec("UPDATE training.studentcourse SET csflag = '1' WHERE studentid = $1 and courseid = $2", params["studentid"], params["courseid"]); err != nil {
+		log.Fatal("Error while deleting course", err)
 	} else {
-		fmt.Fprintf(writer, `You are not authorized person`)
+		fmt.Fprintf(writer, `block student successfully`)
 	}
-
-}
-func checkUser(request *http.Request) (string, error) {
-	params := mux.Vars(request)
-	crConn := ctxt.Value("crConn").(*driver.DB)
-	row := crConn.DatabaseConn.QueryRow("select user_mst.user_flag from training.user_mst,training.course_mst where (user_mst.userid=course_mst.trainerid) and courseid=$1", params["courseid"])
-	err := row.Scan(&user.UserFlag)
-	if err != nil {
-		log.Fatal("Error", err)
-	}
-	return user.UserFlag, err
 }
