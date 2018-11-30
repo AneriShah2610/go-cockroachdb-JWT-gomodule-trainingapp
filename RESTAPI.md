@@ -4,8 +4,8 @@
 1. `GET` : "/user/fetch" : Fetch user details 
 2. `POST` : "/user/register" : User Registration
 
-        `Content-Type :"application/json"`
-        `body : 
+        `Content-Type :"application/json"
+        body : 
             [
                 {
                     "userid" : 1,
