@@ -61,15 +61,15 @@
 ## APIs for student_course
 10. `POST` : "/course/student/new" : Student can enrolled in particular course
         
-        'Content-Type :"application/json"
-        body :
+        `Content-Type :"application/json"`
+        `body :
             [
                 {
                         "csid" : 1,
                         "courseid" : 1,
                         "studentid" : 1
                 }
-            ]' 
+            ]`
 11. `GET` : "/course/student/fetch/{studentname}" : Student fetch all course details if he/she is enrolled in that course otherwise fetch few details
     parameters:  
             - studentname = string
