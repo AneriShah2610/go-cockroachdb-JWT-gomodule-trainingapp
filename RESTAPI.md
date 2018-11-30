@@ -18,9 +18,11 @@
             ]`
 3. `GET` : "/user/login/{username}/{password}" : Login 
 
-        `parameters: `
-        `    - username = string(data type)
-             - password = string`
+        `
+        parameters: 
+             - username = string(data type)
+             - password = string
+             `
 4. `DELETE` : "/user/delete/{userid}" : User can delete their account
 
         `parameters: `  
